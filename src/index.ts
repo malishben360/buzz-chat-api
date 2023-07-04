@@ -1,45 +1,21 @@
-// import * as dotenv from 'dotenv-safe';
+import { Request, Response } from 'express';
+import dotenv from 'dotenv-safe';
 
-// // Expose environment variables
-// dotenv.config();
+import { app, server } from '@src/config/ServerConfig';
 
-// import { sum } from '@src/math';
+dotenv.config();
 
-// console.log(`Hi ${process.env.MY_NAME} your sum is `, sum(4, 5));
+// Expose server.
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server listening at port ${port}`);
+});
 
-// Decorator function.
-function asyncDecorator(asyncFn: any) {
-  return function (...args: any) {
-    return new Promise((resolve, reject) => {
-      asyncFn(...args, (err: string | null, result: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  };
-}
+// Connect to database.
 
-// Original async function.
-function fetchData(asyncFn: any) {
-  setTimeout(() => {
-    const data = 'Async Data.';
-    asyncFn(null, data);
-  }, 1000);
-}
+// Server entry point.
+app.use('/', (req: Request, res: Response) => {
+  return res.status(200).json({ alive: true });
+});
 
-// Decorate the function.
-const decorated = asyncDecorator(fetchData);
-// User the function in an asynction function.
-async function run() {
-  try {
-    const data = await decorated();
-    console.log(data);
-  } catch (err: any) {
-    console.log('Error: ', err);
-  }
-}
-// Call the function.
-run();
+// Register all routes.
