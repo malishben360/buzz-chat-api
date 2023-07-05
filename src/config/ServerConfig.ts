@@ -1,5 +1,5 @@
-import express, { Application } from 'express';
-import http, { Server } from 'http';
+import express, { type Application } from 'express';
+import http, { type Server } from 'http';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';

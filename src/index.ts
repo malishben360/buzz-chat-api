@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 import dotenv from 'dotenv-safe';
 
 import { app, server } from '@src/config/ServerConfig';
-import * as db from '@src/config/DatabaseConfig';
+import * as database from '@src/config/DatabaseConfig';
+import router from '@src/routes';
 
 dotenv.config();
 
@@ -13,11 +14,12 @@ server.listen(PORT, () => {
 });
 
 // Connect to database.
-db.connect();
+database.connect();
 
 // Server entry point.
-app.use('/', (req: Request, res: Response) => {
-  return res.status(200).json({ alive: true });
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ alive: true });
 });
 
 // Register all routes.
+app.use('/api/v1/', router());
