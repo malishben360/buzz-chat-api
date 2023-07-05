@@ -2,16 +2,18 @@ import { Request, Response } from 'express';
 import dotenv from 'dotenv-safe';
 
 import { app, server } from '@src/config/ServerConfig';
+import * as db from '@src/config/DatabaseConfig';
 
 dotenv.config();
 
 // Expose server.
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Server listening at port ${port}`);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server listening at port ${PORT}`);
 });
 
 // Connect to database.
+db.connect();
 
 // Server entry point.
 app.use('/', (req: Request, res: Response) => {
