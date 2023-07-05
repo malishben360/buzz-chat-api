@@ -7,7 +7,7 @@ export interface IUser extends Document {
 
 const UserSchema = new Schema({
   username: { type: String, require: true, unique: true },
-  password: { type: String, require: true },
+  password: { type: String, require: true, select: false },
 });
 
 export const User = model<IUser, Model<IUser>>('User', UserSchema);

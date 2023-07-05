@@ -12,7 +12,7 @@ export const getUsers = async (): Promise<IUser[] | Error> => {
 
 export const getUserById = async (id: string): Promise<IUser | Error> => {
   try {
-    return (await User.findById(id)) as IUser;
+    return (await User.findById(id).select('+password')) as IUser;
   } catch (err: any) {
     console.log('Error DB: ', err);
     return err as Error;
@@ -23,7 +23,9 @@ export const getUserByUsername = async (
   username: string
 ): Promise<IUser | Error> => {
   try {
-    return (await User.findOne({ username: username })) as IUser;
+    return (await User.findOne({ username: username }).select(
+      '+password'
+    )) as IUser;
   } catch (err: any) {
     console.log('Error DB: ', err);
     return err as Error;
