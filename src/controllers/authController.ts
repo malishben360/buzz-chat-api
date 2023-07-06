@@ -17,9 +17,7 @@ export const login = async (req: Request, res: Response) => {
     // Check if user exist.
     const userExist = (await getUserByUsername(username)) as IUser;
     if (!userExist) {
-      return res
-        .status(401)
-        .json({ err: 'Invalid username or password', userExist });
+      return res.status(401).json({ err: 'Invalid username or password' });
     }
 
     // Authenticate user.
@@ -43,7 +41,7 @@ export const login = async (req: Request, res: Response) => {
     res.cookie('BC-TOKEN', token);
     return res
       .status(200)
-      .json({ message: 'User authenticated', data: { userId: userExist._id } });
+      .json({ id: userExist._id, username: userExist.username });
   } catch (err: any) {
     console.log('Error controller: ', err);
   }
@@ -82,14 +80,13 @@ export const register = async (req: Request, res: Response) => {
       id: newUser._id,
       username: newUser.username,
     } as IUser;
-    console.log(userData);
 
     // Set client cookie.
     const token = generateToken(userData);
     res.cookie('BC-TOKEN', token);
     return res.status(201).json({
       message: 'Registered successfully',
-      data: { userId: newUser._id },
+      id: newUser._id,
     });
   } catch (err: any) {
     console.log('Error controller: ', err);
@@ -100,9 +97,7 @@ export const register = async (req: Request, res: Response) => {
 export const logout = async (_: Request, res: Response) => {
   try {
     res.clearCookie('BC-TOKEN');
-    return res
-      .status(200)
-      .json({ message: 'User logout successfully', data: {} });
+    return res.status(200).json({ message: 'User logout successfully' });
   } catch (err: any) {
     console.log('Error controller: ', err);
   }

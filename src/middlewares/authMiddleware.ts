@@ -13,7 +13,7 @@ export const authorize = async (
 
   // Check if token was send with the request.
   if (!token) {
-    return res.status(401).json({ err: 'Access denied' });
+    return res.status(401).json({ err: 'No token' });
   }
 
   // Validate the token.
@@ -21,5 +21,6 @@ export const authorize = async (
   if (!payload) {
     return res.status(401).json({ err: 'Invalid token.' });
   }
+
   return next();
 };
