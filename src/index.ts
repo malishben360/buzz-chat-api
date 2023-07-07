@@ -1,5 +1,4 @@
 import { type Request, type Response } from 'express';
-import { type RawData } from 'ws';
 import http from 'http';
 import dotenv from 'dotenv-safe';
 
@@ -7,7 +6,7 @@ import { app, server, wss } from '@src/config/ServerConfig';
 import * as database from '@src/config/DatabaseConfig';
 import router from '@src/routes';
 import { authenticateToken } from './utilities';
-import { ExtendedWebSocket, Payload } from './types';
+import { type ExtendedWebSocket, type Payload } from './types';
 
 dotenv.config();
 
@@ -40,6 +39,7 @@ wss.on(
     if (tokenCookieString) {
       const token = tokenCookieString.split('=')[1];
       if (token) {
+        //TODO: Rename Payload to TokenPayload
         const { id, username } = (await authenticateToken(token)) as Payload;
         connection.id = id;
         connection.username = username;
@@ -55,7 +55,13 @@ wss.on(
         [...wss.clients]
           .filter((c: ExtendedWebSocket) => c.id === recipient)
           .map((c: ExtendedWebSocket) => {
-            c.send(JSON.stringify({ sender: connection.id, text: text }));
+            c.send(
+              JSON.stringify({
+                sender: connection.id,
+                recipient: recipient,
+                text: text,
+              })
+            );
           });
       }
     });
