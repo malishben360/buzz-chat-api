@@ -8,12 +8,15 @@ export interface IUser extends Document {
   };
 }
 
-const UserSchema = new Schema({
-  username: { type: String, require: true, unique: true },
-  authentication: {
-    salt: { type: String, select: false },
-    password: { type: String, select: false },
+const UserSchema = new Schema(
+  {
+    username: { type: String, require: true, unique: true },
+    authentication: {
+      salt: { type: String, select: false },
+      password: { type: String, select: false },
+    },
   },
-});
+  { timestamps: true }
+);
 
 export const User = model<IUser, Model<IUser>>('User', UserSchema);

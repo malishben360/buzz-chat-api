@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 
 import { getUsers } from '@src/services';
 import { IUser } from '@src/models';
 import { authenticateToken } from '@src/utilities';
-import { Payload } from '@src/types';
+import { type Payload } from '@src/types';
 
 export const getUsersController = async (req: Request, res: Response) => {
   const users = (await getUsers()) as IUser[];
