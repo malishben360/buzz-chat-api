@@ -1,4 +1,5 @@
 export type Payload = {
-  salt: string;
-  password: string;
+  id: string;
+  username: string;
+  iot: number;
 };

@@ -1,7 +1,7 @@
 {
-  "name": "linkage-collab-api",
+  "name": "buzz-chat-api",
   "version": "1.0.0",
-  "description": "Linkages and Collaborations API for The Directorate of University Advancement, Ahmadu Bello University Zaria",
+  "description": "API for a live chat web applications",
   "main": "./src/index.ts",
   "scripts": {
     "start:dev": "nodemon",

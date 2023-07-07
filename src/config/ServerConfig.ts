@@ -1,5 +1,6 @@
-import express, { type Application } from 'express';
-import http, { type Server } from 'http';
+import express, { Application } from 'express';
+import WebSocket from 'ws';
+import http, { Server } from 'http';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';
@@ -22,4 +23,8 @@ app.use(compression());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+// create RESTFul server.
 export const server: Server = http.createServer(app);
+
+// create stream server(websocket).
+export const wss = new WebSocket.WebSocketServer({ server });
