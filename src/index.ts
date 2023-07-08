@@ -7,6 +7,7 @@ import * as database from '@src/config/DatabaseConfig';
 import router from '@src/routes';
 import { authenticateToken } from './utilities';
 import { type ExtendedWebSocket, type Payload } from './types';
+import { createMessage } from './services';
 
 dotenv.config();
 
@@ -47,22 +48,33 @@ wss.on(
     }
 
     // Send incoming message to a specified user.
-    connection.on('message', (message: string | Buffer) => {
+    connection.on('message', async (message: string | Buffer) => {
       const messageData = JSON.parse(message.toString());
       const { recipient, text } = messageData;
 
       if (recipient && text) {
-        [...wss.clients]
-          .filter((c: ExtendedWebSocket) => c.id === recipient)
-          .map((c: ExtendedWebSocket) => {
-            c.send(
-              JSON.stringify({
-                sender: connection.id,
-                recipient: recipient,
-                text: text,
-              })
-            );
-          });
+        // Save message in database.
+        const message = await createMessage({
+          sender: connection.id,
+          recipient: recipient,
+          text: text,
+        });
+
+        // If message was create send it to the recipients.
+        if (message) {
+          [...wss.clients]
+            .filter((c: ExtendedWebSocket) => c.id === recipient)
+            .map((c: ExtendedWebSocket) => {
+              c.send(
+                JSON.stringify({
+                  sender: connection.id,
+                  recipient: recipient,
+                  text: text,
+                  id: message?._id,
+                })
+              );
+            });
+        }
       }
     });
 
