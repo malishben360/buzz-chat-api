@@ -32,6 +32,38 @@ app.use('/api/v1/', router());
 wss.on(
   'connection',
   async (connection: ExtendedWebSocket, req: http.IncomingMessage) => {
+    const notifyAboutOnlineUsers = () => {
+      [...wss.clients].forEach((c: ExtendedWebSocket) => {
+        c.send(
+          JSON.stringify({
+            online: [...wss.clients].map((c: ExtendedWebSocket) => {
+              return {
+                id: c.id,
+                username: c.username,
+              };
+            }),
+          })
+        );
+      });
+    };
+
+    // Monitor the connection heartbeat.
+    connection.isAlive = true;
+
+    connection.timer = setInterval(() => {
+      connection.ping();
+      connection.deathTimer = setTimeout(() => {
+        connection.isAlive = false;
+        clearInterval(connection.timer);
+        connection.terminate();
+        notifyAboutOnlineUsers();
+      }, 1000);
+    }, 5000);
+
+    connection.on('pong', () => {
+      clearTimeout(connection.deathTimer);
+    });
+
     // Get BC-TOKEN from the cookies.
     const tokenCookieString = req.headers.cookie
       ?.split(';')
@@ -79,17 +111,6 @@ wss.on(
     });
 
     // Notify all connected user about a connection.
-    [...wss.clients].forEach((c: ExtendedWebSocket) => {
-      c.send(
-        JSON.stringify({
-          online: [...wss.clients].map((c: ExtendedWebSocket) => {
-            return {
-              id: c.id,
-              username: c.username,
-            };
-          }),
-        })
-      );
-    });
+    notifyAboutOnlineUsers();
   }
 );

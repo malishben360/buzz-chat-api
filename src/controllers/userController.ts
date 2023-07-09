@@ -7,8 +7,11 @@ import { type Payload } from '@src/types';
 
 export const getUsersController = async (req: Request, res: Response) => {
   const users = (await getUsers()) as IUser[];
-
-  return res.status(200).json({ message: 'Fetched users successfully', users });
+  const userData = users.map((user) => ({
+    id: user._id,
+    username: user.username,
+  }));
+  return res.status(200).json(userData);
 };
 
 export const getUserProfileController = async (req: Request, res: Response) => {
