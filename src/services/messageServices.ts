@@ -1,8 +1,16 @@
 import { Message, type IMessage } from '@src/models';
 
-export const getMessages = async (): Promise<IMessage[] | null> => {
+export const getMessagesByUsersId = async (
+  userId: string,
+  selectedUserId: string
+): Promise<IMessage[] | null> => {
   try {
-    return await Message.find();
+    return await Message.find({
+      $or: [
+        { sender: { $in: [userId, selectedUserId] } },
+        { recipient: { $in: [userId, selectedUserId] } },
+      ],
+    }).sort({ createdAt: 1 });
   } catch (err: any) {
     console.log('Message Error: ', err);
     return null;

@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { type Response, type NextFunction } from 'express';
 
+import { type ExtendedRequest, type Payload } from '@src/types';
 import { authenticateToken } from '@src/utilities';
-import { Payload } from '@src/types';
 
 export const authorize = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -21,6 +21,8 @@ export const authorize = async (
   if (!payload) {
     return res.status(401).json({ err: 'Invalid token.' });
   }
+
+  req.user = payload;
 
   return next();
 };
