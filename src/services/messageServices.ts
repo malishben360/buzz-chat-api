@@ -6,7 +6,7 @@ export const getMessagesByUsersId = async (
 ): Promise<IMessage[] | null> => {
   try {
     return await Message.find({
-      $or: [
+      $and: [
         { sender: { $in: [userId, selectedUserId] } },
         { recipient: { $in: [userId, selectedUserId] } },
       ],
