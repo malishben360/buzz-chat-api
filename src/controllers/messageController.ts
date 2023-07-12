@@ -1,6 +1,5 @@
 import { IMessage } from '@src/models';
 import { createMessage, getMessagesByUsersId } from '@src/services';
-import { authenticateToken } from '@src/utilities';
 import { type Request, type Response } from 'express';
 
 import { type ExtendedRequest } from '@src/types';
@@ -27,6 +26,7 @@ export const getMessagesController = async (
         sender: msg.sender,
         recipient: msg.recipient,
         text: msg.text,
+        file: msg.file,
       };
     });
     return res.status(200).json(messagesData);

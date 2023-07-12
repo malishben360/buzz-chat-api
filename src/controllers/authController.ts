@@ -97,7 +97,7 @@ export const register = async (req: Request, res: Response) => {
 export const logout = async (_: Request, res: Response) => {
   try {
     res.clearCookie('BC-TOKEN');
-    return res.status(200).json({ message: 'User logout successfully' });
+    return res.status(200).json({ message: 'Ok' });
   } catch (err: any) {
     console.log('Error controller: ', err);
   }

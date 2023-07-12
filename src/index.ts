@@ -1,5 +1,7 @@
 import { type Request, type Response } from 'express';
-import http from 'http';
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
 import dotenv from 'dotenv-safe';
 
 import { app, server, wss } from '@src/config/ServerConfig';
@@ -82,14 +84,34 @@ wss.on(
     // Send incoming message to a specified user.
     connection.on('message', async (message: string | Buffer) => {
       const messageData = JSON.parse(message.toString());
-      const { recipient, text } = messageData;
+      const { recipient, text, file } = messageData;
 
-      if (recipient && text) {
+      let filename = '';
+
+      if (file) {
+        const parts = file.name.split('.');
+        const ext = parts[parts.length - 1];
+        filename = Date.now() + '.' + ext;
+        const filePath = await path.resolve(
+          __dirname,
+          '../public/uploads/',
+          filename
+        );
+
+        const buffer = file.data.split(',')[1];
+        const bufferData = Buffer.from(buffer, 'base64');
+        fs.writeFile(filePath, bufferData, { encoding: 'base64' }, () => {
+          console.log('File uploaded');
+        });
+      }
+
+      if (recipient && (text || file)) {
         // Save message in database.
         const message = await createMessage({
           sender: connection.id,
           recipient: recipient,
           text: text,
+          file: filename ? filename : null,
         });
 
         // If message was create send it to the recipients.
@@ -99,10 +121,11 @@ wss.on(
             .map((c: ExtendedWebSocket) => {
               c.send(
                 JSON.stringify({
+                  id: message?._id,
                   sender: connection.id,
                   recipient: recipient,
                   text: text,
-                  id: message?._id,
+                  file: filename,
                 })
               );
             });

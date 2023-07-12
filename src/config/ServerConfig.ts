@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import WebSocket from 'ws';
 import http, { Server } from 'http';
+import path from 'node:path';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';
@@ -22,6 +23,10 @@ app.use(
 app.use(compression());
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+// Expose the upload folder to the public.
+const uploadsPath = path.resolve(__dirname, '../../public/uploads');
+app.use('/api/v1/uploads', express.static(uploadsPath));
 
 // create RESTFul server.
 export const server: Server = http.createServer(app);
